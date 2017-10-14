@@ -11,7 +11,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-
+// This class creates the splits and the final output file
 public class Pacechart {
 	double distance;
 	double[] elevation;
