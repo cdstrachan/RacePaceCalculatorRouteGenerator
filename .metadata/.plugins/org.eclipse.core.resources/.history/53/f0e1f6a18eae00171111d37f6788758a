@@ -1,0 +1,129 @@
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalTime;
+import java.util.ArrayList;
+
+import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+
+public class Calculator {
+	  
+	public static void main(String[] args) throws IOException {
+		double[] elevation;
+		double [] manualWeighting;
+		Workbook  wb = new XSSFWorkbook();
+
+        Pacechart myChart = new Pacechart();
+        
+        // setup race distance
+        myChart.distance = 21.1;        
+        
+        // setup elevation profiles
+        // +1 is just to make user input easier
+		elevation = new double[(int) Math.ceil(myChart.distance) + 1];  // create elevation profiles
+		elevation [1] = 10;
+		elevation [2] = 26;
+		elevation [3] = 6;
+		elevation [4] = 0;
+		elevation [5] = 5;
+		elevation [6] = 1;
+		elevation [7] = 1;
+		elevation [8] =-2;
+		elevation [9] = 5;
+		elevation [10] = 5;
+		elevation [11] = 7;
+		elevation [12] = 0;
+		elevation [13] = 2;
+		elevation [14] = -1;
+		elevation [15] = 1;
+		elevation [16] = -2;
+		elevation [17] = 0;
+		elevation [18] = 8;
+		elevation [19] = 12;
+		elevation [20] = 13;
+		elevation [21] = -15;
+		elevation [22] = 0;
+		myChart.elevation = elevation;
+		
+		// setup manual weighting
+		manualWeighting = new double[(int) Math.ceil(myChart.distance) + 1];  // create elevation profiles
+		manualWeighting [1] = 100;
+		manualWeighting [2] = 100;
+		manualWeighting [3] = 100;
+		manualWeighting [4] = 100;
+		manualWeighting [5] = 100;
+		manualWeighting [6] = 100;
+		manualWeighting [7] = 100;
+		manualWeighting [8] = 100;
+		manualWeighting [9] = 100;
+		manualWeighting [10] = 100;
+		manualWeighting [11] = 100;
+		manualWeighting [12] = 100;
+		manualWeighting [13] = 100;
+		manualWeighting [14] = 100;
+		manualWeighting [15] = 100;
+		manualWeighting [16] = 100;
+		manualWeighting [17] = 100;
+		manualWeighting [18] = 100;
+		manualWeighting [19] = 100;
+		manualWeighting [20] = 100;
+		manualWeighting [21] = 100;
+		manualWeighting [22] = 100;
+		myChart.manualWeighting = manualWeighting;
+		
+		// calculate results
+        myChart.createPaceChart(LocalTime.of(2,29,15) , LocalTime.of(0,1,0), 1.0);
+        //myChart.createPaceChart(LocalTime.of(1,59,15) , LocalTime.of(0,1,15), 10);
+        
+		Sheet sheet = wb.createSheet("Chart1");
+		
+		// create header rows
+		Row headerRow = sheet.createRow(0);
+		
+		
+		Cell cell;
+		cell = headerRow.createCell(0);
+		cell.setCellValue("Split");
+		cell = headerRow.createCell(1);
+		cell.setCellValue("Elevation");
+		cell = headerRow.createCell(0);
+		cell.setCellValue("Pace");
+		cell = headerRow.createCell(1);
+		cell.setCellValue("Split");
+		cell = headerRow.createCell(2);
+		cell.setCellValue("Total");
+		
+		for (Split raceSplit : myChart.raceSplits)
+		{
+			Row dataRow = sheet.createRow(raceSplit.splitNumber);
+			cell = dataRow.createCell(0);
+			cell.setCellValue(raceSplit.splitNumber);
+			cell = dataRow.createCell(1);
+			cell.setCellValue(raceSplit.elevation);
+			cell = dataRow.createCell(2);
+			cell.setCellValue(raceSplit.finalTime.toString());
+			cell = dataRow.createCell(3);
+			cell.setCellValue(raceSplit.finalPace.toString());
+			cell = dataRow.createCell(4);
+			cell.setCellValue(raceSplit.finalElapsedTime.toString());
+			
+			
+		}
+		 
+		 
+		// Write the output to a file
+		String file = "output.xlsx";
+		FileOutputStream out = new FileOutputStream(file);
+		wb.write(out);
+		out.close();
+
+        
+	    }
+	
+}

@@ -1,0 +1,23 @@
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalTime;
+
+public class Calculator {
+	  
+	public static void main(String[] args) {
+		// TODO: setup static data such as fade	
+		//TODO: setup splits
+        System.out.println("*** Pace caculator - start ***");
+        
+        Pacechart myChart = new Pacechart();
+        myChart.distance = 9.2;
+        myChart.plannedRaceTime =  LocalTime.of(0,59,15);
+        myChart.startDelay =  LocalTime.of(0,1,15);
+        myChart.fade = 2;
+        myChart.createPaceChart();
+        
+        
+        
+	    }
+	
+}

@@ -1,0 +1,43 @@
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalTime;
+import java.util.ArrayList;
+
+public class Calculator {
+	  
+	public static void main(String[] args) {
+		// TODO: setup static data such as fade	
+		//TODO: setup splits
+		ArrayList<Split> raceSplits;
+		double[] elevation;
+		System.out.println("*** Pace caculator - start ***");
+		
+		
+        Pacechart myChart = new Pacechart();
+        myChart.distance = 9.2;
+        myChart.plannedRaceTime =  LocalTime.of(0,59,15);
+        myChart.startDelay =  LocalTime.of(0,1,15);
+        myChart.fade = 2;
+        
+        
+        
+		elevation = new double[(int) Math.ceil(myChart.distance)];  // create elevation profiles
+		elevation [0] = 1;
+		elevation [1] = 2;
+		elevation [2] = 3;
+		elevation [3] = 4;
+		elevation [4] = 3;
+		elevation [5] = 2;
+		elevation [6] = 1;
+		elevation [7] = 10;
+		elevation [8] = 10;
+		elevation [9] = 10;
+		myChart.elevation = elevation;
+        
+        myChart.createPaceChart();
+        
+        
+        
+	    }
+	
+}

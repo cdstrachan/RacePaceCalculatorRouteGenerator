@@ -1,0 +1,91 @@
+import java.time.LocalTime;
+
+public class Split {
+
+	// entered fields
+	double split;
+	double distance;
+	LocalTime nominalTime;
+	double nominalTimeDec;
+	double elevation;
+	
+	// calculated fields
+	private double gradient;
+	private double paceImpact;
+	private double timeDelta;
+	
+	double timeWithGradient;
+	double manualWeighting;
+	double fadefactor;
+	LocalTime weightedTime;
+	LocalTime finalTime;
+	double finalPace;
+	LocalTime finalElapsedTime;
+	
+	public void calculatePrivateFields(){
+		gradient = elevation / 10;
+		paceImpact = calcPaceImpact(elevation);  // some of this can be combined
+		timeDelta = paceImpact * gradient; // seconds
+		nominalTimeDec = TimeToDouble(nominalTime);  // decimal time eg 8:30 is 8.5		
+		timeWithGradient = 60 / ((60 / nominalTimeDec) - timeDelta);
+				
+		//timeWithGradient = nominalTime - LocalTime.of(0, 0, timeDelta); 
+		System.out. println("split: " + split);
+		System.out.println("nominalTime: " + nominalTime);
+		System.out.println("nominalTimeDec: " + nominalTimeDec);
+		
+		
+		System.out. println("gradient: " + gradient);
+		System.out.println("paceImact: " + paceImpact);
+		System.out.println("timeDelta: " + timeDelta);
+		System.out.println("timeWithGradient: " + timeWithGradient);
+		System.out.println("timeWithGradientTime: " + DoubleToTime(timeWithGradient));
+	}
+	
+	private double calcPaceImpact(double elevation) {
+		if (elevation > 25) return 0.4;
+		if (elevation > 0) return 0.5;
+		if (elevation < -20) return 0.15;
+		if (elevation < 0) return 0.3;
+		return 0;
+		
+	}
+	
+	private double TimeToDouble(LocalTime theTime) {
+		double result = theTime.getSecond();
+		result = result / 60;
+		result = result + (double) theTime.getMinute();
+		result = result + theTime.getHour() * 60;		
+		return result;
+	}
+
+	private LocalTime DoubleToTime(Double theTimeDec) {
+		int hours;
+		int minutes;
+		int seconds;
+		seconds = getFractionalPart(theTimeDec);
+		System.out.println((seconds);
+		return LocalTime.of(0,0,seconds);
+		/*hours = theTimeDec | 60;
+		
+		LocalTime result = theTime.getSecond();
+		result = result / 60;
+		result = result + (double) theTime.getMinute();
+		result = result + theTime.getHour() * 60;		
+		return result;
+		
+		*/
+	}
+	
+	private static int getFractionalPart(double n) {
+		double result;
+	    if (n > 0) {
+	        result =  n - Math.floor(n);
+	    } else {
+	    	result =  ((n - Math.ceil(n)) * -1);
+	    }
+	    return (int) result * 100;
+	}
+
+	
+}

@@ -1,0 +1,39 @@
+import java.time.LocalTime;
+
+public class utils {
+	
+		static double TimeToDouble(LocalTime theTime) {
+			double result = theTime.getSecond();
+			result = result / 60;
+			result = result + (double) theTime.getMinute();
+			result = result + theTime.getHour() * 60;		
+			return result;
+		}
+
+		static LocalTime DoubleToTime(Double theTimeDec) {
+			int hours;
+			int minutes;
+			int seconds;
+			
+			seconds = getSeconds(theTimeDec);
+			minutes = (int) (theTimeDec % 60);
+			hours = (int) (theTimeDec / 60);
+			return LocalTime.of(hours,minutes,seconds);
+		}
+		
+		static int getSeconds(double n) {
+			double result;
+			int seconds;
+		    if (n > 0) {
+		        result =  n - Math.floor(n);
+		    } else {
+		    	result =  ((n - Math.ceil(n)) * -1);
+		    }
+		    
+		    seconds = (int) (result * 600000/1000);
+		    return seconds;
+		}
+
+		
+
+}

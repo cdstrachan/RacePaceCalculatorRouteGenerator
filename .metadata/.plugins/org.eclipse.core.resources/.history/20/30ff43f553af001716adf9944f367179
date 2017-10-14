@@ -1,0 +1,287 @@
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+
+import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.io.FileOutputStream;
+
+
+public class Pacechart {
+	double distance;
+	double[] elevation;
+	double[] manualWeighting;
+	private LocalTime averagePace;
+	ArrayList<Split> raceSplits;
+	
+	public void createPaceChart(Workbook wb, LocalTime plannedRaceTime, LocalTime startDelay, double fade, String raceName) {
+		
+		
+        String chartName = plannedRaceTime.getHour() + "h" + plannedRaceTime.getMinute() + " " + (int)fade;
+		Sheet sheet = wb.createSheet(chartName);
+
+		// calculate the average pace from the planned race time and the start delay
+		double totalWeightedTimeDec = 0;
+		double timeOverrunFactor;
+		double finalElapsedTimeDec = 0;
+		
+		raceSplits = new ArrayList<Split>();
+		
+		System.out.println("Planned time: " + plannedRaceTime);
+		System.out.println("Start Delay: " + startDelay);
+		System.out.println("Moving Time:" + utils.DoubleToTime(utils.TimeToDouble(plannedRaceTime) - utils.TimeToDouble(startDelay)));
+		averagePace = utils.DoubleToTime((utils.TimeToDouble(plannedRaceTime) - utils.TimeToDouble(startDelay)) / distance);
+		System.out.println("Average Moving Pace: " + averagePace);
+		
+		// calculate what we can without totals
+		for (int counter = 1;counter < Math.ceil(distance) + 1; counter ++)  //TODO: cater for fractions eg 21.1
+		{
+			Split raceSplit = new Split();
+			
+	        // the last lap may be a different (shorter) distance
+			raceSplit.splitNumber = counter;
+	        if (counter == Math.ceil(distance))
+	        	raceSplit.distance = ((double)Math.round((distance - Math.floor(distance))*100))/100;
+	        else
+	        	raceSplit.distance = 1;
+	        
+	        raceSplit.elevation = elevation[counter];
+	        raceSplit.manualWeighting = manualWeighting[counter];
+	        
+			// calculate the split time
+	        if (counter == 1)
+			{
+				raceSplit.nominalTime = utils.DoubleToTime((utils.TimeToDouble(averagePace) + utils.TimeToDouble(startDelay)) * raceSplit.distance);
+			}
+			else
+				raceSplit.nominalTime = utils.DoubleToTime(utils.TimeToDouble(averagePace) * raceSplit.distance);
+
+			// cater for the fade 
+	        if (counter <= 1+ distance/2)
+	        	raceSplit.fadeFactor = 1 - fade/100;
+	        else
+	        	raceSplit.fadeFactor = 1 + fade/100;
+	        	        
+	        raceSplit.calculatePacePerSplit();
+	        totalWeightedTimeDec += raceSplit.weightedTimeDec;
+	        //System.out.println(counter + " " + raceSplit.nominalTime + " " + raceSplit.fadeFactor + " "  + utils.DoubleToTime(raceSplit.weightedTimeDec));
+	        raceSplits.add((raceSplit));	         
+		}
+		// calculate totals how much out our total weighted time is
+		timeOverrunFactor = totalWeightedTimeDec / utils.TimeToDouble(plannedRaceTime);
+
+		// calculate final times
+		for (Split raceSplit : raceSplits)
+		{
+			raceSplit.finalTimeDec = raceSplit.weightedTimeDec / timeOverrunFactor;
+			raceSplit.finalTime = utils.DoubleToTime(raceSplit.finalTimeDec);
+			raceSplit.finalPace = utils.DoubleToTime(raceSplit.finalTimeDec / raceSplit.distance); 
+			finalElapsedTimeDec += raceSplit.finalTimeDec;
+			raceSplit.finalElapsedTime = utils.DoubleToTime(finalElapsedTimeDec);
+			System.out.println(raceSplit.splitNumber + "|" + utils.formatTime(raceSplit.finalTime) + "|" + utils.formatTime(raceSplit.finalElapsedTime) + "|" + utils.formatTime(raceSplit.finalPace) + "|" + (int) raceSplit.elevation);
+			
+		}
+		
+		//create spreadsheet
+		Map<String, CellStyle> styles = createStyles(wb);
+		int rowOffset = 0;
+		int colOffset = 1;
+		Row row;
+		Cell cell;
+		rowOffset ++;
+
+		row = sheet.createRow(rowOffset);
+		cell = CreateCell(styles,row,"styleTitle",colOffset,"Race:");
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,raceName));
+		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
+		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
+		rowOffset ++;
+
+		row = sheet.createRow(rowOffset);
+		cell = CreateCell(styles,row,"styleTitle",colOffset,"Time:");
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,utils.formatTime(plannedRaceTime));
+		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
+		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
+		rowOffset ++;
+
+		row = sheet.createRow(rowOffset);		
+		cell = CreateCell(styles,row,"styleTitle",colOffset,"Start Delay");
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,utils.formatTime(startDelay));
+		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
+		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
+		rowOffset ++;
+
+		row = sheet.createRow(rowOffset);		
+		cell = CreateCell(styles,row,"styleTitle",colOffset,"Fade");
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,fade + "%");
+		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
+		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
+		rowOffset ++;
+		
+		sheet.addMergedRegion(CellRangeAddress.valueOf("$B$2:$C$2"));
+		sheet.addMergedRegion(CellRangeAddress.valueOf("$B$3:$C$3"));
+		sheet.addMergedRegion(CellRangeAddress.valueOf("$B$4:$C$4"));
+		sheet.addMergedRegion(CellRangeAddress.valueOf("$D$2:$E$2"));
+		sheet.addMergedRegion(CellRangeAddress.valueOf("$D$3:$E$3"));
+		sheet.addMergedRegion(CellRangeAddress.valueOf("$D$4:$E$4"));
+
+		rowOffset ++;
+		rowOffset ++;
+
+		row = sheet.createRow(rowOffset);
+		row.setHeightInPoints(35);
+		cell = CreateCell(styles,row,"styleCentreAligned",colOffset,"Km");
+		cell = CreateCell(styles,row,"styleRightAligned",colOffset + 1,"Elev (m)");
+		cell = CreateCell(styles,row,"styleRightAligned",colOffset + 2,"Pace");
+		cell = CreateCell(styles,row,"styleRightAligned",colOffset + 3,"Split time");
+		cell = CreateCell(styles,row,"styleRightAligned",colOffset + 4,"Total time");
+		
+        sheet.setColumnWidth(colOffset,5*256);
+        sheet.setColumnWidth(colOffset + 1,5*256);
+        sheet.setColumnWidth(colOffset + 2,6*256);
+        sheet.setColumnWidth(colOffset + 3,6*256);
+        sheet.setColumnWidth(colOffset + 4,7*256);
+		
+		rowOffset ++;
+
+		for (Split raceSplit : raceSplits)
+		{	
+			row = sheet.createRow(rowOffset);
+			cell = CreateCell(styles,row,"styleLeftAligned",colOffset,String.valueOf(raceSplit.splitNumber));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 1,String.valueOf(raceSplit.elevation));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 2,utils.formatTime(raceSplit.finalTime));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 3,utils.formatTime(raceSplit.finalPace));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 4,utils.formatTime(raceSplit.finalElapsedTime));
+			rowOffset ++;
+		}
+	}
+	
+	private Cell CreateCell(Map<String, CellStyle> styles, Row row, String cellStyle,int col, String value) {
+		Cell cell = row.createCell(col);
+		cell.setCellStyle(styles.get(cellStyle));
+		cell.setCellValue(value);
+		return cell;
+	}
+	
+	private static Map<String, CellStyle> createStyles(Workbook wb){
+		String defaultFont = "Calibri";
+        Map<String, CellStyle> styles = new HashMap<>();
+        
+        // setup the font
+        Font font = wb.createFont();
+        font.setFontHeightInPoints((short)12);
+        font.setFontName(defaultFont);
+        
+        CellStyle style;
+        
+        style = wb.createCellStyle();
+        style.setFont(font);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
+        style.setFillForegroundColor(IndexedColors.TAN.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setWrapText(true);
+        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setVerticalAlignment(VerticalAlignment.TOP);
+        styles.put("styleTitle", style);
+        
+        style = wb.createCellStyle();
+        style.setFont(font);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
+        style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setWrapText(true);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        styles.put("styleLeftAligned", style);
+
+        style = wb.createCellStyle();
+        style.setFont(font);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
+        style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setWrapText(true);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.TOP);
+        styles.put("styleRightAligned", style);
+        
+        style = wb.createCellStyle();
+        style.setFont(font);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
+        style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setWrapText(true);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.TOP);
+        styles.put("styleCentreAligned", style);
+        
+        style = wb.createCellStyle();
+        style.setFont(font);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
+        style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setWrapText(true);
+        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setVerticalAlignment(VerticalAlignment.TOP);
+        styles.put("styleSub", style);
+        
+        style = wb.createCellStyle();
+        style.setFont(font);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+        style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+        style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+        style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
+        style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
+        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setVerticalAlignment(VerticalAlignment.TOP);
+        styles.put("styleClean", style);
+
+        return styles;
+    }
+
+	
+}
