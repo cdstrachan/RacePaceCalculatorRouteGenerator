@@ -11,54 +11,33 @@ public class Calculator {
         System.out.println("*** Starting ***");
         
         // setup race distance
-        myChart.distance = 42.2;        
+        myChart.distance = 21.1;        
         
         // setup elevation profiles
         // +1 is just to make user input easier
 		elevation = new double[(int) Math.ceil(myChart.distance) + 1];  // create elevation profiles
-		elevation[1] = -10;
-		elevation[2] = -11;
-		elevation[3] = -3;
-		elevation[4] = -4;
-		elevation[5] = -3;
-		elevation[6] = 3;
-		elevation[7] = -3;
-		elevation[8] = 3;
-		elevation[9] = 6;
-		elevation[10] = 5;
-		elevation[11] = 10;
-		elevation[12] = 19;
-		elevation[13] = 12;
-		elevation[14] = -3;
+		elevation[1] = 16;
+		elevation[2] = 26;
+		elevation[3] = -14;
+		elevation[4] = 0;
+		elevation[5] = 42;
+		elevation[6] = -32;
+		elevation[7] = -27;
+		elevation[8] = 12;
+		elevation[9] = 80;
+		elevation[10] = -62;
+		elevation[11] = -24;
+		elevation[12] = -6;
+		elevation[13] = -7;
+		elevation[14] = 0;
 		elevation[15] = 8;
-		elevation[16] = 24;
-		elevation[17] = -31;
-		elevation[18] = -11;
-		elevation[19] = -1;
-		elevation[20] = 19;
-		elevation[21] = 30;
-		elevation[22] = 14;
-		elevation[23] = 8;
-		elevation[24] = 11;
-		elevation[25] = 30;
-		elevation[26] = 19;
-		elevation[27] = 13;
-		elevation[28] = 23;
-		elevation[29] = -7;
-		elevation[30] = 4;
-		elevation[31] = 35;
-		elevation[32] = -17;
-		elevation[33] = -17;
-		elevation[34] = -12;
-		elevation[35] = -5;
-		elevation[36] = -6;
-		elevation[37] = -20;
-		elevation[38] = -10;
-		elevation[39] = -8;
-		elevation[40] = -29;
-		elevation[41] = -12;
-		elevation[42] = -18;
-		elevation[43] = 20;
+		elevation[16] = -5;
+		elevation[17] = 7;
+		elevation[18] = -3;
+		elevation[19] = 11;
+		elevation[20] = -1;
+		elevation[21] = -1;
+		elevation[22] = 0;
 		myChart.elevation = elevation;
 		
 		// setup manual weighting
@@ -86,13 +65,13 @@ public class Calculator {
 		manualWeighting [21] = 100;
 		manualWeighting [22] = 100;
 		myChart.manualWeighting = manualWeighting;
-		myChart.raceName = "Athens Marathon";
-		myChart.plannedRaceTimeFirst = LocalTime.of(4,14,15);
-		myChart.plannedRaceTimeLast = LocalTime.of(5,30,00);
+		myChart.raceName = "Slave Route";
+		myChart.plannedRaceTimeFirst = LocalTime.of(2,14,15);
+		myChart.plannedRaceTimeLast = LocalTime.of(3,30,00);
 		myChart.plannedRaceTimeDelta = LocalTime.of(0,15,00);
-		myChart.startDelay = LocalTime.of(0,2,0);
+		myChart.startDelay = LocalTime.of(0,0,45);
 		myChart.firstFade = 1;
-		myChart.lastFade = 5;
+		myChart.lastFade = 1;
 
 		// calculate results
 		try {

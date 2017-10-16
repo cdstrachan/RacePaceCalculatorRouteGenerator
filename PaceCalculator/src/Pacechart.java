@@ -71,13 +71,14 @@ public class Pacechart {
 		averageEndToEndPace = utils.DoubleToTime((utils.TimeToDouble(plannedRaceTime)) / distance);
 		
 		// calculate what we can without totals
-		for (int counter = 1;counter < Math.ceil(distance) + 1; counter ++)  //TODO: cater for fractions eg 21.1
+		for (int counter = 1;counter < Math.ceil(distance) + 1; counter ++)
 		{
 			Split raceSplit = new Split();
 			
 	        // the last lap may be a different (shorter) distance
 			raceSplit.splitNumber = counter;
-	        if (counter == Math.ceil(distance))
+			//System.out.println("Split #: " + counter);
+	        if (counter == Math.ceil(distance) && distance < Math.ceil(distance))   // last split of an (eg) 21.1 race
 	        	raceSplit.distance = ((double)Math.round((distance - Math.floor(distance))*100))/100;
 	        else
 	        	raceSplit.distance = 1;
@@ -213,11 +214,15 @@ public class Pacechart {
         sheet.setColumnWidth(colOffset + 4,7*256);
 		
 		rowOffset ++;
-
+		double distance = 0;
 		for (Split raceSplit : raceSplits)
 		{	
 			row = createRow(sheet, rowOffset);
-			cell = CreateCell(styles,row,"styleLeftAligned",colOffset,String.valueOf(raceSplit.splitNumber));
+			distance += raceSplit.distance;
+			if (Math.ceil(distance) > distance) // we are at a fraction - the last split. EG 21.1
+				cell = CreateCell(styles,row,"styleLeftAligned",colOffset,String.valueOf(distance));
+			else
+				cell = CreateCell(styles,row,"styleLeftAligned",colOffset,String.valueOf(raceSplit.splitNumber));
 			cell = CreateCell(styles,row,"styleClean",colOffset + 1,String.valueOf(raceSplit.elevation));
 			cell = CreateCell(styles,row,"styleClean",colOffset + 2,utils.formatTime(raceSplit.finalTime));
 			cell = CreateCell(styles,row,"styleClean",colOffset + 3,utils.formatTime(raceSplit.finalPace));
