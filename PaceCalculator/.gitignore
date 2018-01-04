@@ -12,7 +12,6 @@ local.properties
 # Locally stored "Eclipse launch configurations"
 *.launch
 
-
 # Java annotation processor (APT)
 .factorypath
 
