@@ -28,7 +28,7 @@ public class Split {
 		gradient = elevation / distance / 10;
 		paceImpact = calcPaceImpact(elevation);  // some of this can be combined
 		timeDelta = paceImpact * gradient; // seconds
-		nominalTimeDec = utils.TimeToDouble(nominalTime);  // decimal time eg 8:30 is 8.5		
+		nominalTimeDec = paceUtils.TimeToDouble(nominalTime);  // decimal time eg 8:30 is 8.5		
 		timeWithGradientDec = 60 / ((60 / nominalTimeDec) - timeDelta);  // convert to KM/H; add the gradient impact and convert back to min/km
 		weightedTimeDec = timeWithGradientDec * manualWeighting * fadeFactor / 100;
 	}

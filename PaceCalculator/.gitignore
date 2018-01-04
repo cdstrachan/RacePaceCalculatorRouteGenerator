@@ -1,5 +1,7 @@
 .metadata
 .metadata/
+../metadata
+../metadata/
 bin/
 tmp/
 *.tmp
@@ -10,7 +12,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
-
+.DS_Store
 # Locally stored "Eclipse launch configurations"
 *.launch
 
@@ -20,3 +22,4 @@ local.properties
 
 *.xlsx
 
+/target/

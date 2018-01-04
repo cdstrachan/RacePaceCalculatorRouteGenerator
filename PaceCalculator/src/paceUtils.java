@@ -1,7 +1,7 @@
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class utils {
+public class paceUtils {
 	
 		static double TimeToDouble(LocalTime theTime) {
 			double result = theTime.getSecond();

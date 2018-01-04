@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.time.LocalTime;
 
+
 public class Calculator {
 	  
 	public static void main(String[] args)  {
@@ -11,33 +12,21 @@ public class Calculator {
         System.out.println("*** Starting ***");
         
         // setup race distance
-        myChart.distance = 21.1;        
+        myChart.distance = 10;        
         
         // setup elevation profiles
         // +1 is just to make user input easier
 		elevation = new double[(int) Math.ceil(myChart.distance) + 1];  // create elevation profiles
-		elevation[1] = 16;
-		elevation[2] = 26;
-		elevation[3] = -14;
-		elevation[4] = 0;
-		elevation[5] = 42;
-		elevation[6] = -32;
-		elevation[7] = -27;
-		elevation[8] = 12;
-		elevation[9] = 80;
-		elevation[10] = -62;
-		elevation[11] = -24;
-		elevation[12] = -6;
-		elevation[13] = -7;
-		elevation[14] = 0;
-		elevation[15] = 8;
-		elevation[16] = -5;
-		elevation[17] = 7;
-		elevation[18] = -3;
-		elevation[19] = 11;
-		elevation[20] = -1;
-		elevation[21] = -1;
-		elevation[22] = 0;
+		elevation[1] = 2;
+		elevation[2] = 5;
+		elevation[3] = 2;
+		elevation[4] = 23;
+		elevation[5] = 37;
+		elevation[6] = -18;
+		elevation[7] = -30;
+		elevation[8] = -2;
+		elevation[9] = -3;
+		elevation[10] = -3;
 		myChart.elevation = elevation;
 		
 		// setup manual weighting
@@ -52,26 +41,14 @@ public class Calculator {
 		manualWeighting [8] = 100;
 		manualWeighting [9] = 100;
 		manualWeighting [10] = 100;
-		manualWeighting [11] = 100;
-		manualWeighting [12] = 100;
-		manualWeighting [13] = 100;
-		manualWeighting [14] = 100;
-		manualWeighting [15] = 100;
-		manualWeighting [16] = 100;
-		manualWeighting [17] = 100;
-		manualWeighting [18] = 100;
-		manualWeighting [19] = 100;
-		manualWeighting [20] = 100;
-		manualWeighting [21] = 100;
-		manualWeighting [22] = 100;
 		myChart.manualWeighting = manualWeighting;
-		myChart.raceName = "Slave Route";
-		myChart.plannedRaceTimeFirst = LocalTime.of(2,14,15);
-		myChart.plannedRaceTimeLast = LocalTime.of(3,30,00);
+		myChart.raceName = "Ommedraai";
+		myChart.plannedRaceTimeFirst = LocalTime.of(0,54,30);
+		myChart.plannedRaceTimeLast = LocalTime.of(0,54,30);
 		myChart.plannedRaceTimeDelta = LocalTime.of(0,15,00);
-		myChart.startDelay = LocalTime.of(0,0,45);
-		myChart.firstFade = 1;
-		myChart.lastFade = 1;
+		myChart.startDelay = LocalTime.of(0,0,30);
+		myChart.firstFade = 0;
+		myChart.lastFade = 0;
 
 		// calculate results
 		try {

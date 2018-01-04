@@ -1,15 +1,19 @@
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
-import org.apache.poi.xssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 // This class creates the splits and the final output file
 public class Pacechart {
@@ -32,20 +36,20 @@ public class Pacechart {
 	public void createPaceCharts() throws IOException {
 		wb = new XSSFWorkbook();
 
-        double plannedRaceTimeFirstDec = utils.TimeToDouble(plannedRaceTimeFirst); 
-        double plannedRaceTimeLastDec = utils.TimeToDouble(plannedRaceTimeLast);
-        double plannedRaceTimeDeltaDec = utils.TimeToDouble(plannedRaceTimeDelta);
+        double plannedRaceTimeFirstDec = paceUtils.TimeToDouble(plannedRaceTimeFirst); 
+        double plannedRaceTimeLastDec = paceUtils.TimeToDouble(plannedRaceTimeLast);
+        double plannedRaceTimeDeltaDec = paceUtils.TimeToDouble(plannedRaceTimeDelta);
         
         // count through the different race times
         for (double raceTimeDec = plannedRaceTimeFirstDec; raceTimeDec <= plannedRaceTimeLastDec; raceTimeDec += plannedRaceTimeDeltaDec) {
     		int colOffset = 1;
-        	LocalTime raceTime = utils.DoubleToTime(raceTimeDec);
+        	LocalTime raceTime = paceUtils.DoubleToTime(raceTimeDec);
         	String chartName = raceTime.getHour() + "h" + raceTime.getMinute();
             Sheet sheet = wb.createSheet(chartName);
             
             // count through the fades
 	        for (int fade = firstFade; fade <= lastFade; fade ++) {
-	        	System.out.println("Creating chart for time:" + utils.formatTime(raceTime) + ", fade: " +  fade);
+	        	System.out.println("Creating chart for time:" + paceUtils.formatTime(raceTime) + ", fade: " +  fade);
 		        createPaceChart(sheet, raceTime, startDelay, fade, colOffset);
 	        	colOffset += 6;
 	        }
@@ -67,8 +71,8 @@ public class Pacechart {
 		
 		raceSplits = new ArrayList<Split>();
 		
-		averageMovingPace = utils.DoubleToTime((utils.TimeToDouble(plannedRaceTime) - utils.TimeToDouble(startDelay)) / distance);
-		averageEndToEndPace = utils.DoubleToTime((utils.TimeToDouble(plannedRaceTime)) / distance);
+		averageMovingPace = paceUtils.DoubleToTime((paceUtils.TimeToDouble(plannedRaceTime) - paceUtils.TimeToDouble(startDelay)) / distance);
+		averageEndToEndPace = paceUtils.DoubleToTime((paceUtils.TimeToDouble(plannedRaceTime)) / distance);
 		
 		// calculate what we can without totals
 		for (int counter = 1;counter < Math.ceil(distance) + 1; counter ++)
@@ -89,10 +93,10 @@ public class Pacechart {
 			// calculate the split time
 	        if (counter == 1)
 			{
-				raceSplit.nominalTime = utils.DoubleToTime((utils.TimeToDouble(averageMovingPace) + utils.TimeToDouble(startDelay)) * raceSplit.distance);
+				raceSplit.nominalTime = paceUtils.DoubleToTime((paceUtils.TimeToDouble(averageMovingPace) + paceUtils.TimeToDouble(startDelay)) * raceSplit.distance);
 			}
 			else
-				raceSplit.nominalTime = utils.DoubleToTime(utils.TimeToDouble(averageMovingPace) * raceSplit.distance);
+				raceSplit.nominalTime = paceUtils.DoubleToTime(paceUtils.TimeToDouble(averageMovingPace) * raceSplit.distance);
 
 			// cater for the fade 
 	        if (counter <= 1+ distance/2)
@@ -105,16 +109,16 @@ public class Pacechart {
 	        raceSplits.add((raceSplit));	         
 		}
 		// calculate totals how much out our total weighted time is
-		timeOverrunFactor = totalWeightedTimeDec / utils.TimeToDouble(plannedRaceTime);
+		timeOverrunFactor = totalWeightedTimeDec / paceUtils.TimeToDouble(plannedRaceTime);
 
 		// calculate final times
 		for (Split raceSplit : raceSplits)
 		{
 			raceSplit.finalTimeDec = raceSplit.weightedTimeDec / timeOverrunFactor;
-			raceSplit.finalTime = utils.DoubleToTime(raceSplit.finalTimeDec);
-			raceSplit.finalPace = utils.DoubleToTime(raceSplit.finalTimeDec / raceSplit.distance); 
+			raceSplit.finalTime = paceUtils.DoubleToTime(raceSplit.finalTimeDec);
+			raceSplit.finalPace = paceUtils.DoubleToTime(raceSplit.finalTimeDec / raceSplit.distance); 
 			finalElapsedTimeDec += raceSplit.finalTimeDec;
-			raceSplit.finalElapsedTime = utils.DoubleToTime(finalElapsedTimeDec);
+			raceSplit.finalElapsedTime = paceUtils.DoubleToTime(finalElapsedTimeDec);
 			
 		}
 		
@@ -143,7 +147,7 @@ public class Pacechart {
 
 		row = createRow(sheet, rowOffset);
 		cell = CreateCell(styles,row,"styleTitle",colOffset,"Time");
-		cell = CreateCell(styles,row,"styleSub",colOffset + 2,utils.formatTime(plannedRaceTime));
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,paceUtils.formatTime(plannedRaceTime));
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 4,"");
@@ -151,7 +155,7 @@ public class Pacechart {
 
 		row = createRow(sheet, rowOffset);		
 		cell = CreateCell(styles,row,"styleTitle",colOffset,"Start Delay");
-		cell = CreateCell(styles,row,"styleSub",colOffset + 2,utils.formatTime(startDelay) + " min");
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,paceUtils.formatTime(startDelay) + " min");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 4,"");
@@ -167,7 +171,7 @@ public class Pacechart {
 		
 		row = createRow(sheet, rowOffset);		
 		cell = CreateCell(styles,row,"styleTitle",colOffset,"Average pace");
-		cell = CreateCell(styles,row,"styleSub",colOffset + 2,utils.formatTime(averageEndToEndPace));
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,paceUtils.formatTime(averageEndToEndPace));
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 4,"");
@@ -175,7 +179,7 @@ public class Pacechart {
 
 		row = createRow(sheet, rowOffset);		
 		cell = CreateCell(styles,row,"styleTitle",colOffset,"Moving pace");
-		cell = CreateCell(styles,row,"styleSub",colOffset + 2,utils.formatTime(averageMovingPace));
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,paceUtils.formatTime(averageMovingPace));
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 4,"");
@@ -183,14 +187,14 @@ public class Pacechart {
 
 		// setup merged cells
 		for (int counter = 2; counter < 9; counter ++) {
-			String first = utils.getCharForNumber(colOffset);
-			String second = utils.getCharForNumber(colOffset + 1);
+			String first = paceUtils.getCharForNumber(colOffset);
+			String second = paceUtils.getCharForNumber(colOffset + 1);
 			String range = "$" + first + "$" + counter + ":$" + second + "$" + counter;
 			sheet.addMergedRegion(CellRangeAddress.valueOf(range));
 		}
 		for (int counter = 2; counter < 9; counter ++) {
-			String first = utils.getCharForNumber(colOffset + 2);
-			String second = utils.getCharForNumber(colOffset + 4);
+			String first = paceUtils.getCharForNumber(colOffset + 2);
+			String second = paceUtils.getCharForNumber(colOffset + 4);
 			String range = "$" + first + "$" + counter + ":$" + second + "$" + counter;
 			sheet.addMergedRegion(CellRangeAddress.valueOf(range));
 		}
@@ -224,9 +228,9 @@ public class Pacechart {
 			else
 				cell = CreateCell(styles,row,"styleLeftAligned",colOffset,String.valueOf(raceSplit.splitNumber));
 			cell = CreateCell(styles,row,"styleClean",colOffset + 1,String.valueOf(raceSplit.elevation));
-			cell = CreateCell(styles,row,"styleClean",colOffset + 2,utils.formatTime(raceSplit.finalTime));
-			cell = CreateCell(styles,row,"styleClean",colOffset + 3,utils.formatTime(raceSplit.finalPace));
-			cell = CreateCell(styles,row,"styleClean",colOffset + 4,utils.formatTime(raceSplit.finalElapsedTime));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 2,paceUtils.formatTime(raceSplit.finalTime));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 3,paceUtils.formatTime(raceSplit.finalPace));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 4,paceUtils.formatTime(raceSplit.finalElapsedTime));
 			rowOffset ++;
 		}		
 	}
@@ -260,101 +264,102 @@ public class Pacechart {
         
         style = wb.createCellStyle();
         style.setFont(font);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
+        
+        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderTop(CellStyle.BORDER_THIN);
+        style.setBorderLeft(CellStyle.BORDER_THIN);
+        style.setBorderRight(CellStyle.BORDER_THIN);
         style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         style.setTopBorderColor(IndexedColors.BLACK.getIndex());
         style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
         style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
         style.setFillForegroundColor(IndexedColors.TAN.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         style.setWrapText(true);
-        style.setAlignment(HorizontalAlignment.LEFT);
-        style.setVerticalAlignment(VerticalAlignment.TOP);
+        style.setAlignment(CellStyle.ALIGN_LEFT);
+        style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
         styles.put("styleTitle", style);
         
         style = wb.createCellStyle();
         style.setFont(font);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderTop(CellStyle.BORDER_THIN);
+        style.setBorderLeft(CellStyle.BORDER_THIN);
+        style.setBorderRight(CellStyle.BORDER_THIN);
         style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         style.setTopBorderColor(IndexedColors.BLACK.getIndex());
         style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
         style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
         style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setWrapText(true);
-        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
         styles.put("styleLeftAligned", style);
 
         style = wb.createCellStyle();
         style.setFont(font);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderTop(CellStyle.BORDER_THIN);
+        style.setBorderLeft(CellStyle.BORDER_THIN);
+        style.setBorderRight(CellStyle.BORDER_THIN);
         style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         style.setTopBorderColor(IndexedColors.BLACK.getIndex());
         style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
         style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
         style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setWrapText(true);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setVerticalAlignment(VerticalAlignment.TOP);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
         styles.put("styleRightAligned", style);
         
         style = wb.createCellStyle();
         style.setFont(font);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderTop(CellStyle.BORDER_THIN);
+        style.setBorderLeft(CellStyle.BORDER_THIN);
+        style.setBorderRight(CellStyle.BORDER_THIN);
         style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         style.setTopBorderColor(IndexedColors.BLACK.getIndex());
         style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
         style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
         style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setWrapText(true);
-        style.setAlignment(HorizontalAlignment.CENTER);
-        style.setVerticalAlignment(VerticalAlignment.TOP);
+        style.setAlignment(CellStyle.ALIGN_CENTER);
+        style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
         styles.put("styleCentreAligned", style);
         
         style = wb.createCellStyle();
         style.setFont(font);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderTop(CellStyle.BORDER_THIN);
+        style.setBorderLeft(CellStyle.BORDER_THIN);
+        style.setBorderRight(CellStyle.BORDER_THIN);
         style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         style.setTopBorderColor(IndexedColors.BLACK.getIndex());
         style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
         style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
         style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
-        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setFillPattern(CellStyle.SOLID_FOREGROUND);
         style.setWrapText(true);
-        style.setAlignment(HorizontalAlignment.LEFT);
-        style.setVerticalAlignment(VerticalAlignment.TOP);
+        style.setAlignment(CellStyle.ALIGN_LEFT);
+        style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
         styles.put("styleSub", style);
         
         style = wb.createCellStyle();
         style.setFont(font);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
+        style.setBorderBottom(CellStyle.BORDER_THIN);
+        style.setBorderTop(CellStyle.BORDER_THIN);
+        style.setBorderLeft(CellStyle.BORDER_THIN);
+        style.setBorderRight(CellStyle.BORDER_THIN);
         style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
         style.setTopBorderColor(IndexedColors.BLACK.getIndex());
         style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
         style.setRightBorderColor(IndexedColors.BLACK.getIndex());        
         style.setFillForegroundColor(IndexedColors.PALE_BLUE.getIndex());
-        style.setAlignment(HorizontalAlignment.RIGHT);
-        style.setVerticalAlignment(VerticalAlignment.TOP);
+        style.setAlignment(CellStyle.ALIGN_RIGHT);
+        style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
         styles.put("styleClean", style);
 
         return styles;
