@@ -12,21 +12,26 @@ public class Calculator {
         System.out.println("*** Starting ***");
         
         // setup race distance
-        myChart.distance = 10;        
+        myChart.distance = 15;        
         
         // setup elevation profiles
         // +1 is just to make user input easier
 		elevation = new double[(int) Math.ceil(myChart.distance) + 1];  // create elevation profiles
-		elevation[1] = 2;
-		elevation[2] = 5;
-		elevation[3] = 2;
-		elevation[4] = 23;
-		elevation[5] = 37;
-		elevation[6] = -18;
-		elevation[7] = -30;
-		elevation[8] = -2;
-		elevation[9] = -3;
+		elevation[1] = -10;
+		elevation[2] = 0;
+		elevation[3] = 15;
+		elevation[4] = 33;
+		elevation[5] = 22;
+		elevation[6] = -31;
+		elevation[7] = -11;
+		elevation[8] = -11;
+		elevation[9] = 9;
 		elevation[10] = -3;
+		elevation[11] = 52;
+		elevation[12] = -20;
+		elevation[13] = -40;
+		elevation[14] = -19;
+		elevation[15] = -7;
 		myChart.elevation = elevation;
 		
 		// setup manual weighting
@@ -41,12 +46,17 @@ public class Calculator {
 		manualWeighting [8] = 100;
 		manualWeighting [9] = 100;
 		manualWeighting [10] = 100;
+		manualWeighting [11] = 100;
+		manualWeighting [12] = 100;
+		manualWeighting [13] = 100;
+		manualWeighting	 [14] = 100;
+		manualWeighting [15] = 100;
 		myChart.manualWeighting = manualWeighting;
-		myChart.raceName = "Ommedraai";
-		myChart.plannedRaceTimeFirst = LocalTime.of(0,54,30);
-		myChart.plannedRaceTimeLast = LocalTime.of(0,54,30);
-		myChart.plannedRaceTimeDelta = LocalTime.of(0,15,00);
-		myChart.startDelay = LocalTime.of(0,0,30);
+		myChart.raceName = "Hohernort 2018 new route";
+		myChart.plannedRaceTimeFirst = LocalTime.of(1,14,30);
+		myChart.plannedRaceTimeLast = LocalTime.of(1,59,30);
+		myChart.plannedRaceTimeDelta = LocalTime.of(0,5,00);
+		myChart.startDelay = LocalTime.of(0,1,00);
 		myChart.firstFade = 0;
 		myChart.lastFade = 0;
 
