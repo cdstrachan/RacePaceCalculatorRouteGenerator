@@ -227,7 +227,7 @@ public class Pacechart {
 				cell = CreateCell(styles,row,"styleLeftAligned",colOffset,String.valueOf(distance));
 			else
 				cell = CreateCell(styles,row,"styleLeftAligned",colOffset,String.valueOf(raceSplit.splitNumber));
-			cell = CreateCell(styles,row,"styleClean",colOffset + 1,String.valueOf(raceSplit.elevation));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 1,String.valueOf((int)raceSplit.elevation));
 			cell = CreateCell(styles,row,"styleClean",colOffset + 2,paceUtils.formatTime(raceSplit.finalTime));
 			cell = CreateCell(styles,row,"styleClean",colOffset + 3,paceUtils.formatTime(raceSplit.finalPace));
 			cell = CreateCell(styles,row,"styleClean",colOffset + 4,paceUtils.formatTime(raceSplit.finalElapsedTime));
