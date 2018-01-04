@@ -1,5 +1,8 @@
 .metadata
 .metadata/
+.recommenders
+.recommenders/
+
 bin/
 tmp/
 *.tmp
