@@ -88,7 +88,7 @@ public class Pacechart {
 	        	raceSplit.distance = 1;
 	        
 	        raceSplit.elevation = elevation[counter];
-	        raceSplit.manualWeighting = 100; //manualWeighting[counter];
+	        raceSplit.manualWeighting = manualWeighting[counter];
 	        
 			// calculate the split time
 	        if (counter == 1)
@@ -260,9 +260,7 @@ public class Pacechart {
         font.setFontHeightInPoints((short)12);
         font.setFontName(defaultFont);
         
-        CellStyle style;
-        
-        style = wb.createCellStyle();
+        CellStyle style = wb.createCellStyle();
         style.setFont(font);
         
         style.setBorderBottom(CellStyle.BORDER_THIN);
