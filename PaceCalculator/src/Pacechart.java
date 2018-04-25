@@ -100,11 +100,19 @@ public class Pacechart {
 				raceSplit.nominalTime = paceUtils.DoubleToTime(paceUtils.TimeToDouble(averageMovingPace) * raceSplit.distance);
 
 			// cater for the fade 
-	        if (counter <= 1+ distance/2)
-	        	raceSplit.fadeFactor = 1 - fade/100;
-	        else
-	        	raceSplit.fadeFactor = 1 + fade/100;
-	        	        
+			// Todo: change to be linear per split
+			
+			if (counter < 1+ distance/2) 
+			{
+				raceSplit.fadeFactor = 1 - fade/100;
+				//raceSplit.fadeFactor = 1 + (raceSplit.splitNumber-1) * (fade/100/distance)*2;
+			}
+			else
+			{
+				raceSplit.fadeFactor = 1 + fade/100;
+				//raceSplit.fadeFactor = 1 + (raceSplit.splitNumber-1) * (fade/100/distance)*2;
+			}
+
 	        raceSplit.calculatePacePerSplit();
 	        totalWeightedTimeDec += raceSplit.weightedTimeDec;
 	        raceSplits.add((raceSplit));	         
