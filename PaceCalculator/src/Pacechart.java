@@ -88,7 +88,8 @@ public class Pacechart {
 	        	raceSplit.distance = 1;
 	        
 	        raceSplit.elevation = elevation[counter];
-	        raceSplit.manualWeighting = manualWeighting[counter];
+	       //raceSplit.manualWeighting = manualWeighting[counter];
+	        raceSplit.manualWeighting = 100;//manualWeighting[counter];
 	        
 			// calculate the split time
 	        if (counter == 1)
