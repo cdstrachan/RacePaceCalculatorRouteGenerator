@@ -1,7 +1,7 @@
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class paceUtils {
+public class PaceUtils {
 	
 		static double TimeToDouble(LocalTime theTime) {
 			double result = theTime.getSecond();
@@ -72,7 +72,15 @@ public class paceUtils {
 		    	return Character.toString(alphabet[small]);
 		}
 		
-
+		// TODO: make static variables
+		static double calcPaceImpact(double elevation) {
+			if (elevation > 25) return 0.4;
+			if (elevation > 0) return 0.5;
+			if (elevation < -20) return 0.15;
+			if (elevation < 0) return 0.3;
+			return 0;
+			
+		}
 		
 
 }

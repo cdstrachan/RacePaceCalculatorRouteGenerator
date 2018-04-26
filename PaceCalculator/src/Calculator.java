@@ -7,7 +7,6 @@ public class Calculator {
 	public static void main(String[] args)  {
 		double[] elevation;
 		double [] manualWeighting;
-		double fade;
         Pacechart myChart = new Pacechart();
         System.out.println("*** Starting ***");
         
@@ -48,7 +47,7 @@ public class Calculator {
 		manualWeighting [9] = 100 + baseWeightDelta;
 		manualWeighting [10] = 100;
 		myChart.manualWeighting = manualWeighting;
-		myChart.raceName = "Test";
+		myChart.raceName = "Tesst";
 		myChart.plannedRaceTimeFirst = LocalTime.of(1,00,00);
 		myChart.plannedRaceTimeLast = LocalTime.of(1,30,00);
 		myChart.plannedRaceTimeDelta = LocalTime.of(0,55,00);

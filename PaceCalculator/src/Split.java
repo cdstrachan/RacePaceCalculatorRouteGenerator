@@ -26,22 +26,14 @@ public class Split {
 	
 	public void calculatePacePerSplit(){
 		gradient = elevation / distance / 10;
-		paceImpact = calcPaceImpact(elevation);  // some of this can be combined
+		paceImpact = PaceUtils.calcPaceImpact(elevation);  // some of this can be combined
 		timeDelta = paceImpact * gradient; // seconds
-		nominalTimeDec = paceUtils.TimeToDouble(nominalTime);  // decimal time eg 8:30 is 8.5		
+		nominalTimeDec = PaceUtils.TimeToDouble(nominalTime);  // decimal time eg 8:30 is 8.5		
 		timeWithGradientDec = 60 / ((60 / nominalTimeDec) - timeDelta);  // convert to KM/H; add the gradient impact and convert back to min/km
 		weightedTimeDec = timeWithGradientDec * manualWeighting * fadeFactor / 100;
 	}
 	
-	// TODO: make static variables
-	private double calcPaceImpact(double elevation) {
-		if (elevation > 25) return 0.4;
-		if (elevation > 0) return 0.5;
-		if (elevation < -20) return 0.15;
-		if (elevation < 0) return 0.3;
-		return 0;
-		
-	}
+	
 	
 	
 }

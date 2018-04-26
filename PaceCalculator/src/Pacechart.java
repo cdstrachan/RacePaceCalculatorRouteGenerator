@@ -36,20 +36,20 @@ public class Pacechart {
 	public void createPaceCharts() throws IOException {
 		wb = new XSSFWorkbook();
 
-        double plannedRaceTimeFirstDec = paceUtils.TimeToDouble(plannedRaceTimeFirst); 
-        double plannedRaceTimeLastDec = paceUtils.TimeToDouble(plannedRaceTimeLast);
-        double plannedRaceTimeDeltaDec = paceUtils.TimeToDouble(plannedRaceTimeDelta);
+        double plannedRaceTimeFirstDec = PaceUtils.TimeToDouble(plannedRaceTimeFirst); 
+        double plannedRaceTimeLastDec = PaceUtils.TimeToDouble(plannedRaceTimeLast);
+        double plannedRaceTimeDeltaDec = PaceUtils.TimeToDouble(plannedRaceTimeDelta);
         
         // count through the different race times
         for (double raceTimeDec = plannedRaceTimeFirstDec; raceTimeDec <= plannedRaceTimeLastDec; raceTimeDec += plannedRaceTimeDeltaDec) {
     		int colOffset = 1;
-        	LocalTime raceTime = paceUtils.DoubleToTime(raceTimeDec);
+        	LocalTime raceTime = PaceUtils.DoubleToTime(raceTimeDec);
         	String chartName = raceTime.getHour() + "h" + raceTime.getMinute();
             Sheet sheet = wb.createSheet(chartName);
             
             // count through the fades
 	        for (int fade = firstFade; fade <= lastFade; fade ++) {
-	        	System.out.println("Creating chart for time:" + paceUtils.formatTime(raceTime) + ", fade: " +  fade);
+	        	System.out.println("Creating chart for time:" + PaceUtils.formatTime(raceTime) + ", fade: " +  fade);
 		        createPaceChart(sheet, raceTime, startDelay, fade, colOffset);
 	        	colOffset += 6;
 	        }
@@ -71,8 +71,8 @@ public class Pacechart {
 		
 		raceSplits = new ArrayList<Split>();
 		
-		averageMovingPace = paceUtils.DoubleToTime((paceUtils.TimeToDouble(plannedRaceTime) - paceUtils.TimeToDouble(startDelay)) / distance);
-		averageEndToEndPace = paceUtils.DoubleToTime((paceUtils.TimeToDouble(plannedRaceTime)) / distance);
+		averageMovingPace = PaceUtils.DoubleToTime((PaceUtils.TimeToDouble(plannedRaceTime) - PaceUtils.TimeToDouble(startDelay)) / distance);
+		averageEndToEndPace = PaceUtils.DoubleToTime((PaceUtils.TimeToDouble(plannedRaceTime)) / distance);
 		
 		// calculate what we can without totals
 		for (int counter = 1;counter < Math.ceil(distance) + 1; counter ++)
@@ -94,10 +94,10 @@ public class Pacechart {
 			// calculate the split time
 	        if (counter == 1)
 			{
-				raceSplit.nominalTime = paceUtils.DoubleToTime((paceUtils.TimeToDouble(averageMovingPace) + paceUtils.TimeToDouble(startDelay)) * raceSplit.distance);
+				raceSplit.nominalTime = PaceUtils.DoubleToTime((PaceUtils.TimeToDouble(averageMovingPace) + PaceUtils.TimeToDouble(startDelay)) * raceSplit.distance);
 			}
 			else
-				raceSplit.nominalTime = paceUtils.DoubleToTime(paceUtils.TimeToDouble(averageMovingPace) * raceSplit.distance);
+				raceSplit.nominalTime = PaceUtils.DoubleToTime(PaceUtils.TimeToDouble(averageMovingPace) * raceSplit.distance);
 
 			// cater for the fade 
 			// Todo: change to be linear per split
@@ -118,16 +118,16 @@ public class Pacechart {
 	        raceSplits.add((raceSplit));	         
 		}
 		// calculate totals how much out our total weighted time is
-		timeOverrunFactor = totalWeightedTimeDec / paceUtils.TimeToDouble(plannedRaceTime);
+		timeOverrunFactor = totalWeightedTimeDec / PaceUtils.TimeToDouble(plannedRaceTime);
 
 		// calculate final times
 		for (Split raceSplit : raceSplits)
 		{
 			raceSplit.finalTimeDec = raceSplit.weightedTimeDec / timeOverrunFactor;
-			raceSplit.finalTime = paceUtils.DoubleToTime(raceSplit.finalTimeDec);
-			raceSplit.finalPace = paceUtils.DoubleToTime(raceSplit.finalTimeDec / raceSplit.distance); 
+			raceSplit.finalTime = PaceUtils.DoubleToTime(raceSplit.finalTimeDec);
+			raceSplit.finalPace = PaceUtils.DoubleToTime(raceSplit.finalTimeDec / raceSplit.distance); 
 			finalElapsedTimeDec += raceSplit.finalTimeDec;
-			raceSplit.finalElapsedTime = paceUtils.DoubleToTime(finalElapsedTimeDec);
+			raceSplit.finalElapsedTime = PaceUtils.DoubleToTime(finalElapsedTimeDec);
 			
 		}
 		
@@ -156,7 +156,7 @@ public class Pacechart {
 
 		row = createRow(sheet, rowOffset);
 		cell = CreateCell(styles,row,"styleTitle",colOffset,"Time");
-		cell = CreateCell(styles,row,"styleSub",colOffset + 2,paceUtils.formatTime(plannedRaceTime));
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,PaceUtils.formatTime(plannedRaceTime));
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 4,"");
@@ -164,7 +164,7 @@ public class Pacechart {
 
 		row = createRow(sheet, rowOffset);		
 		cell = CreateCell(styles,row,"styleTitle",colOffset,"Start Delay");
-		cell = CreateCell(styles,row,"styleSub",colOffset + 2,paceUtils.formatTime(startDelay) + " min");
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,PaceUtils.formatTime(startDelay) + " min");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 4,"");
@@ -180,7 +180,7 @@ public class Pacechart {
 		
 		row = createRow(sheet, rowOffset);		
 		cell = CreateCell(styles,row,"styleTitle",colOffset,"Average pace");
-		cell = CreateCell(styles,row,"styleSub",colOffset + 2,paceUtils.formatTime(averageEndToEndPace));
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,PaceUtils.formatTime(averageEndToEndPace));
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 4,"");
@@ -188,7 +188,7 @@ public class Pacechart {
 
 		row = createRow(sheet, rowOffset);		
 		cell = CreateCell(styles,row,"styleTitle",colOffset,"Moving pace");
-		cell = CreateCell(styles,row,"styleSub",colOffset + 2,paceUtils.formatTime(averageMovingPace));
+		cell = CreateCell(styles,row,"styleSub",colOffset + 2,PaceUtils.formatTime(averageMovingPace));
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 1,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 3,"");
 		cell = CreateCell(styles,row,"styleTitle",colOffset + 4,"");
@@ -196,14 +196,14 @@ public class Pacechart {
 
 		// setup merged cells
 		for (int counter = 2; counter < 9; counter ++) {
-			String first = paceUtils.getCharForNumber(colOffset);
-			String second = paceUtils.getCharForNumber(colOffset + 1);
+			String first = PaceUtils.getCharForNumber(colOffset);
+			String second = PaceUtils.getCharForNumber(colOffset + 1);
 			String range = "$" + first + "$" + counter + ":$" + second + "$" + counter;
 			sheet.addMergedRegion(CellRangeAddress.valueOf(range));
 		}
 		for (int counter = 2; counter < 9; counter ++) {
-			String first = paceUtils.getCharForNumber(colOffset + 2);
-			String second = paceUtils.getCharForNumber(colOffset + 4);
+			String first = PaceUtils.getCharForNumber(colOffset + 2);
+			String second = PaceUtils.getCharForNumber(colOffset + 4);
 			String range = "$" + first + "$" + counter + ":$" + second + "$" + counter;
 			sheet.addMergedRegion(CellRangeAddress.valueOf(range));
 		}
@@ -237,9 +237,9 @@ public class Pacechart {
 			else
 				cell = CreateCell(styles,row,"styleLeftAligned",colOffset,String.valueOf(raceSplit.splitNumber));
 			cell = CreateCell(styles,row,"styleClean",colOffset + 1,String.valueOf((int)raceSplit.elevation));
-			cell = CreateCell(styles,row,"styleClean",colOffset + 2,paceUtils.formatTime(raceSplit.finalTime));
-			cell = CreateCell(styles,row,"styleClean",colOffset + 3,paceUtils.formatTime(raceSplit.finalPace));
-			cell = CreateCell(styles,row,"styleClean",colOffset + 4,paceUtils.formatTime(raceSplit.finalElapsedTime));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 2,PaceUtils.formatTime(raceSplit.finalTime));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 3,PaceUtils.formatTime(raceSplit.finalPace));
+			cell = CreateCell(styles,row,"styleClean",colOffset + 4,PaceUtils.formatTime(raceSplit.finalElapsedTime));
 			rowOffset ++;
 		}		
 	}
