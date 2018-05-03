@@ -16,15 +16,15 @@ public class Calculator {
         // setup elevation profiles
         // +1 is just to make user input easier
 		elevation = new double[(int) Math.ceil(myChart.distance) + 1];  // create elevation profiles
-		elevation[1] = 0;
-		elevation[2] = 0;
-		elevation[3] = 0;
-		elevation[4] = 0;
-		elevation[5] = 0;
-		elevation[6] = 0;
-		elevation[7] = 0;
-		elevation[8] = 0;
-		elevation[9] = 0;
+		elevation[1] = 1;
+		elevation[2] = 2;
+		elevation[3] = 3;
+		elevation[4] = 4;
+		elevation[5] = 5;
+		elevation[6] = 4;
+		elevation[7] = 3;
+		elevation[8] = 2;
+		elevation[9] = 1;
 		elevation[10] = 0;
 		
 		myChart.elevation = elevation;
@@ -51,7 +51,7 @@ public class Calculator {
 		myChart.plannedRaceTimeFirst = LocalTime.of(1,00,00);
 		myChart.plannedRaceTimeLast = LocalTime.of(1,30,00);
 		myChart.plannedRaceTimeDelta = LocalTime.of(0,55,00);
-		myChart.startDelay = LocalTime.of(0,0,0);
+		myChart.startDelay = LocalTime.of(0,0,30);
 		myChart.firstFade = 3;
 		myChart.lastFade = 3;
 
