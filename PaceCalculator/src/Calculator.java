@@ -31,10 +31,7 @@ public class Calculator {
 		
 		int baseWeightDelta = 0; //tweaking the hills
 		
-		// setup manual weighting
-		
-		// TODO: change to import file
-		// TODO check if the elevation is  >1, and then allow for a base weighting delta of hills
+		// setup manual weighting		
 		manualWeighting = new double[(int) Math.ceil(myChart.distance) + 1];  // create elevation profiles
 		manualWeighting [1] = 100;
 		manualWeighting [2] = 100;
