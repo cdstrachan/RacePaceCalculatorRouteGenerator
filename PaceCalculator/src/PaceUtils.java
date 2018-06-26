@@ -3,34 +3,50 @@ import java.time.format.DateTimeFormatter;
 
 public class PaceUtils {
 	
-		static double TimeToDouble(LocalTime theTime) {
-			double result = theTime.getSecond();
-			
-			result = result + (double) theTime.getMinute()*60;
-			result = result + theTime.getHour() * 3600;
-			result = result + (double)theTime.getNano()/1000000000 ;
-			return result;
-		}
+		
+	static double TimeToDouble(LocalTime theTime) {
+		double result = theTime.getSecond();
+		result = result / 60;
+		result = result + (double) theTime.getMinute();
+		result = result + theTime.getHour() * 60;		
+		return result;
+	}
 
-		static LocalTime DoubleToTime(Double theTimeDec) {
-			int hours;
-			int minutes;
-			int seconds;
-			int nano;
-			
-			hours = (int) (theTimeDec / 3600);
-			theTimeDec = theTimeDec - (hours * 3600);
-			minutes = (int) (theTimeDec / 60);
-			theTimeDec = theTimeDec - (minutes * 60);
-			seconds = (int) (theTimeDec*1);
-			theTimeDec = theTimeDec - seconds;
-			nano = (int) (theTimeDec * 1000000000);
-			
-			return LocalTime.of(hours,minutes,seconds,nano);
+	static LocalTime DoubleToTime(Double theTimeDec) {
+		int hours;
+		int minutes;
+		int seconds;
+
+		seconds = getSeconds(theTimeDec);
+		minutes = (int) (theTimeDec % 60);
+		hours = (int) (theTimeDec / 60);
+		if (seconds== 60)
+		{
+			seconds = 0;
+			minutes ++;
 		}
-		
-		
-		static String formatTime(LocalTime theTime){
+		if (minutes== 60)
+		{
+			minutes = 0;
+			hours ++;
+		}
+		return LocalTime.of(hours,minutes,seconds);
+	}
+	
+	static int getSeconds(double n) {
+		double result;
+		int seconds;
+	    if (n > 0) {
+	        result =  n - Math.floor(n);
+	    } else {
+	    	result =  ((n - Math.ceil(n)) * -1);
+	    }
+	    
+	    seconds = (int) Math.round((result * 60));
+	    return seconds;
+	}
+	
+	static String formatTime(LocalTime theTime){
 			DateTimeFormatter timeFormatHH = DateTimeFormatter.ofPattern("hh:mm:ss");
 			DateTimeFormatter timeFormatH = DateTimeFormatter.ofPattern("h:mm:ss");
 			DateTimeFormatter timeFormatMM = DateTimeFormatter.ofPattern("mm:ss");

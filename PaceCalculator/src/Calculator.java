@@ -13,13 +13,6 @@ public class Calculator {
         // setup race distance
         myChart.distance = 10;        
         
-        
-        LocalTime test = LocalTime.of(11, 11,11,11);
-        double newtime = PaceUtils.TimeToDouble(test);
-        
-        LocalTime test2 = PaceUtils.DoubleToTime(newtime);
-        
-        
         // setup elevation profiles
         // +1 is just to make user input easier
 		elevation = new double[(int) Math.ceil(myChart.distance) + 1];  // create elevation profiles
@@ -54,9 +47,9 @@ public class Calculator {
 		myChart.raceName = "Tesst";
 		myChart.plannedRaceTimeFirst = LocalTime.of(1,00,00);
 		myChart.plannedRaceTimeLast = LocalTime.of(1,30,00);
-		myChart.plannedRaceTimeDelta = LocalTime.of(0,55,00);
+		myChart.plannedRaceTimeDelta = LocalTime.of(0,05,00);
 		myChart.startDelay = LocalTime.of(0,0,30);
-		myChart.firstFade = 3;
+		myChart.firstFade = 1;
 		myChart.lastFade = 3;
 
 		// calculate results
