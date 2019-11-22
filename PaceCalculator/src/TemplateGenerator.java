@@ -79,7 +79,7 @@ public class TemplateGenerator {
 		fstream.close();
 		paceChartTO.setSplitInputs(splitInputs);
 		Gson gson =new Gson();
-		Writer writer = new FileWriter(paceChartTO.getRaceName() + ".json");
+		Writer writer = new FileWriter("Output/" + paceChartTO.getRaceName() + ".json");
 		String jsonOutput = gson.toJson(paceChartTO);
 		writer.write(jsonOutput);
 		writer.close();
