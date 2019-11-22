@@ -1,0 +1,18 @@
+raceName|Ommedraai 10k, 2019
+plannedRaceTimeFirst|00:39:00
+plannedRaceTimeLast|01:59:00
+plannedRaceTimeDelta|00:10:00
+startDelay|00:01:00
+firstFade|0
+lastFade|2
+distance|10.0
+2
+5
+2
+23
+37
+-18		
+-30		
+-2		
+-3		
+-3		
