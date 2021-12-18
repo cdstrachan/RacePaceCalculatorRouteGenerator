@@ -1,5 +1,5 @@
 ## Companion app
-Main app is here: https://github.com/cdstrachan/RacePaceCalculatorRouteGenerator
+Main app is here: https://github.com/cdstrachan/RacePaceCalculator
 
 This a a simple route-generator for the race pace calculator.
 
