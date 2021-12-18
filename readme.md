@@ -8,6 +8,11 @@ usage Java -JAR..... /path-to-source-file.txt
 
 ## Sample input file
 input.txt
+
+Times are hh:mm:ss
+Columns of numbers are elevation (m) for each km. There should be 1 for each distance.
+EG distance of 10km requires 10 lines.
+
 ```
 raceName|MyRace
 plannedRaceTimeFirst|02:44:00
