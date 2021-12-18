@@ -8,7 +8,7 @@ usage Java -JAR..... /path-to-source-file.txt
 
 ## Sample input file
 input.txt
-'''
+```
 raceName|MyRace
 plannedRaceTimeFirst|02:44:00
 plannedRaceTimeLast|06:59:00
@@ -27,4 +27,4 @@ distance|10
 2
 -18
 2
-'''
+```
