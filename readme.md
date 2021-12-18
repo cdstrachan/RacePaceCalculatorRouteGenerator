@@ -6,6 +6,9 @@ This a a simple route-generator for the race pace calculator.
 ## Usage
 usage Java -JAR..... /path-to-source-file.txt
 
+## Todo
+(umm) unit tests and better error handling
+
 ## Sample input file
 input.txt
 
